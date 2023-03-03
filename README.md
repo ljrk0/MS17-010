@@ -1,5 +1,33 @@
 # MS17-010 Exploit Code
 
+## Background
+
+This repository serves as a super-repository containing the efforts of
+
+ * https://github.com/worawit/MS17-010,
+ * https://github.com/helviojunior/MS17-010, and
+ * https://github.com/3ndG4me/AutoBlue-MS17-010
+
+Their respective state is tracked in the branches
+
+ * worawit,
+ * helvio, and
+ * autoblue
+
+I added a few additional branches:
+
+ * helvio-redux:  This simply aims to improve upon the `send_and_execute.py` script
+   unique to helvio's fork e.g., by adding Python 3 compatibility.
+ * worawit-autoblue:  This rebases autoblues changes ontop of worawit, improving Python 3
+   compatibility and greatly expanding the features.  This is only for improving git log
+   changes since the original autoblue repo doesn't have a proper history going back to
+   the original.  It should be virtually identical to the autoblue branch.
+ * main:  This branch.  Based on the previous branch I tried to clean up some code or
+   add a few fixes.  It should be the go-to branch for now.
+
+---
+
+
 This is some no-bs public exploit code that generates valid shellcode for the eternal blue exploit and scripts out the event listener with the metasploit multi-handler.
 
 This version of the exploit is prepared in a way where you can exploit eternal blue WITHOUT metasploit. Your options for auto shell generation are to generate shellcode with msfvenom that has meterpreter (i.e. with metasploit) or to generate a normal windows cmd shell (i.e. without metasploit). You may also select between staged and stageless payloads if you wish to avoid utilizing the msfconsole entirely and use netcat/your own shell handler. Alternatively you can elect to brew in your own shellcode.
